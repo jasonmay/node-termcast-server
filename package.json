@@ -1,0 +1,11 @@
+{
+    "name": "termcast-server",
+    "pversion": "0.0.0",
+    "author": "Jason May <jason.a.may@gmail.com>",
+    "description": "A web server for broadcasting terminal sessions",
+    "dependencies": {
+        "ffi" : "1.2.x",
+        "ref" : "0.1.x",
+    },
+    "license": "MIT"
+}
