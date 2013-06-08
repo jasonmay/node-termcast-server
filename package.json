@@ -5,7 +5,7 @@
     "description": "A web server for broadcasting terminal sessions",
     "dependencies": {
         "ffi" : "1.2.x",
-        "ref" : "0.1.x",
+        "ref" : "0.1.x"
     },
     "license": "MIT"
 }
