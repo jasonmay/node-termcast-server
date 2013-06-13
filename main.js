@@ -1,5 +1,5 @@
 var ffi   = require('ffi');
-var libvt = ffi.Library('./ext/.libs/libtermcastserver', {
+var libvt = ffi.Library('./ext/libtermchanges/.libs/libtermchanges', {
   'jason': ['int', []],
 });
 
