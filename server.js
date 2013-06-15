@@ -1,6 +1,5 @@
 var ffi   = require('ffi');
-var libvt = ffi.Library('./ext/libtermchanges/.libs/libtermchanges', {
-  'jason': ['int', []],
-});
+var createObject = require('./build/Release/vtchanges');
+var vtchanges = createObject(10);
 
-console.log(libvt.jason());
+console.log(vtchanges.plusOne());
