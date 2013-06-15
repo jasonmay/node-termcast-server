@@ -1,11 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <node.h>
-extern "C" {
-// FIXME ugh this is ugly. any way around this?
-#include "../deps/libvterm/src/vterm_internal.h"
-#include <vterm.h>
-}
 
 #include "vtchanges.h"
 
@@ -16,24 +11,16 @@ VTChanges::~VTChanges() {};
 
 Persistent<Function> VTChanges::constructor;
 
-extern "C" {
-  void ohhai() {
-    void *vt = vterm_new(80, 24);
-    printf("ROWS: %d\n", ((VTerm*)vt)->rows);
-    vterm_free((VTerm*)vt);
-  }
-}
-
 void VTChanges::Init() {
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
   tpl->SetClassName(String::NewSymbol("VTChanges"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   // Prototype
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("plusOne"),
-      FunctionTemplate::New(PlusOne)->GetFunction());
-
-  ohhai();
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("process"),
+      FunctionTemplate::New(Process)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("finish"),
+      FunctionTemplate::New(Finish)->GetFunction());
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
 }
@@ -42,7 +29,10 @@ Handle<Value> VTChanges::New(const Arguments& args) {
   HandleScope scope;
 
   VTChanges* obj = new VTChanges();
-  obj->counter_ = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+#ifdef VTCHANGES_DEBUG
+  fprintf(stderr, "Allocating a VT");
+#endif
+  obj->vt = vterm_new(80, 24);
   obj->Wrap(args.This());
 
   return args.This();
@@ -58,11 +48,23 @@ Handle<Value> VTChanges::NewInstance(const Arguments& args) {
   return scope.Close(instance);
 }
 
-Handle<Value> VTChanges::PlusOne(const Arguments& args) {
+Handle<Value> VTChanges::Process(const Arguments& args) {
   HandleScope scope;
 
   VTChanges* obj = ObjectWrap::Unwrap<VTChanges>(args.This());
-  obj->counter_ += 1;
 
-  return scope.Close(Number::New(obj->counter_));
+
+  return scope.Close(Number::New(obj->vt->rows));
+}
+
+Handle<Value> VTChanges::Finish(const Arguments& args) {
+  HandleScope scope;
+
+  VTChanges* obj = ObjectWrap::Unwrap<VTChanges>(args.This());
+#ifdef VTCHANGES_DEBUG
+  fprintf(stderr, "Freeing the VT\n");
+#endif
+  vterm_free(obj->vt);
+
+  return scope.Close(args.This());
 }
