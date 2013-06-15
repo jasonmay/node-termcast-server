@@ -1,5 +1,12 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <node.h>
+extern "C" {
+// FIXME ugh this is ugly. any way around this?
+#include "../deps/libvterm/src/vterm_internal.h"
+#include <vterm.h>
+}
+
 #include "vtchanges.h"
 
 using namespace v8;
@@ -9,6 +16,14 @@ VTChanges::~VTChanges() {};
 
 Persistent<Function> VTChanges::constructor;
 
+extern "C" {
+  void ohhai() {
+    void *vt = vterm_new(80, 24);
+    printf("ROWS: %d\n", ((VTerm*)vt)->rows);
+    vterm_free((VTerm*)vt);
+  }
+}
+
 void VTChanges::Init() {
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
@@ -17,6 +32,8 @@ void VTChanges::Init() {
   // Prototype
   tpl->PrototypeTemplate()->Set(String::NewSymbol("plusOne"),
       FunctionTemplate::New(PlusOne)->GetFunction());
+
+  ohhai();
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
 }
