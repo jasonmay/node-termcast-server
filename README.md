@@ -17,3 +17,8 @@ There is no server yet. There is a script that tests the VT emulator that will b
 ```
 node server.js
 ```
+
+TODO
+----
+
+Decide on how to communicate between the server and the static site. Either a templating engine or just straight-up AJAX to a minimal endpoint server would suffice.
