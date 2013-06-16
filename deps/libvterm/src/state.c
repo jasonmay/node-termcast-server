@@ -17,6 +17,11 @@
 
 /* Some convenient wrappers to make callback functions easier */
 
+void set_putglyph_hook_hack(VTerm *vt, void (*hook)(VTermPos, void *), void *hookdata) {
+  vt->putglyph_hook_hack = hook;
+  vt->hookdata           = hookdata;
+}
+
 static void putglyph(VTermState *state, const uint32_t chars[], int width, VTermPos pos)
 {
   VTermGlyphInfo info = {
@@ -26,8 +31,11 @@ static void putglyph(VTermState *state, const uint32_t chars[], int width, VTerm
   };
 
   if(state->callbacks && state->callbacks->putglyph)
-    if((*state->callbacks->putglyph)(&info, pos, state->cbdata))
+    if((*state->callbacks->putglyph)(&info, pos, state->cbdata)) {
+      if (state->vt->putglyph_hook_hack)
+        (*state->vt->putglyph_hook_hack)(pos, state->vt->hookdata);
       return;
+    }
 
   fprintf(stderr, "libvterm: Unhandled putglyph U+%04x at (%d,%d)\n", chars[0], pos.col, pos.row);
 }

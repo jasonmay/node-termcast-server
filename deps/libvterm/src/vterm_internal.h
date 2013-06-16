@@ -149,6 +149,9 @@ struct VTerm
 
   VTermState *state;
   VTermScreen *screen;
+
+  void (*putglyph_hook_hack)(VTermPos, void *);
+  void *hookdata;
 };
 
 struct VTermEncoding {
@@ -195,5 +198,7 @@ VTermEncoding *vterm_lookup_encoding(VTermEncodingType type, char designation);
 
 int vterm_unicode_width(int codepoint);
 int vterm_unicode_is_combining(int codepoint);
+
+void set_putglyph_hook_hack(VTerm *vt, void (*hook)(VTermPos, void *), void *hookdata);
 
 #endif

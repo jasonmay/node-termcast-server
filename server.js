@@ -2,6 +2,7 @@ var ffi   = require('ffi');
 var createVT = require('./build/Release/vtchanges');
 var vtchanges = createVT(80, 24);
 
-console.log(require('util').inspect(vtchanges.process("one\r\ntwo\r\nthree"), false, null));
+var p = vtchanges.process("one\r\n\033[0;32mtwo\033[m\r\nt\033[1;34mhre\033[me");
+console.log(require('util').inspect(p, false, null));
 
 vtchanges.finish();
