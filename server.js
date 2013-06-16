@@ -1,10 +1,7 @@
 var ffi   = require('ffi');
-var createObject = require('./build/Release/vtchanges');
-var vtchanges = createObject(10);
+var createVT = require('./build/Release/vtchanges');
+var vtchanges = createVT(80, 24);
 
-console.log(vtchanges.process());
-console.log(vtchanges.process());
-console.log(vtchanges.process());
-console.log(vtchanges.process());
+console.log(require('util').inspect(vtchanges.process("one\r\ntwo\r\nthree"), false, null));
 
 vtchanges.finish();

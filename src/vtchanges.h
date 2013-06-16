@@ -25,4 +25,6 @@ class VTChanges : public node::ObjectWrap {
   VTerm *vt;
 };
 
+#define THROW_ERROR_EXCEPTION(x) ThrowException(Exception::Error(String::New(x)))
+
 #endif
