@@ -12,7 +12,16 @@ npm install
 Running the server
 ------------------
 
-There is no server yet. There is a script that tests the VT emulator that will be used to paint the terminal on the web screen. That can be run with:
+The server doesn't do much except list streams on an unstyled static page using AJAX requests.
+
+Make sure you have a termcast server running from here: https://github.com/jasonmay/app-termcast-server
+
+Take note of where the **connections.sock** unix socket is hosted and place the full page in your config:
+
+cp config.json.example config.json
+<edit config.json>
+
+Then you should be good to go.
 
 ```
 node server.js
