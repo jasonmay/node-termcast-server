@@ -2,6 +2,7 @@ var app = require('express')()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server)
   , net = require('net')
+  , jstream = require('JSONStream')
   , config = require('./config');
 
 function error(status, msg) {
@@ -25,23 +26,51 @@ app.use(function(req, res) {
 });
 
 var streams = {};
+var manager_parser = new jstream.parse();
 var socket = new net.Socket({type: 'unix'});
 socket.on('data', function (message) {
-  data = JSON.parse(message);
-  streams = data;
+  manager_parser.write(message);
+});
+manager_parser.on('data', function (data) {
+
+  // TODO make a class for this stuff
   if (data.notice) {
     if (data.notice == 'connect') {
-      console.log("CONNECT!");
+      var cdata = data.connection;
+      var sid = cdata.session_id;
+
+      if (!streams[sid]) streams[sid] = {};
+      streams[sid].ready = false;
+      streams[sid].id = sid;
+      streams[sid].user = cdata.user;
+      streams[sid].last_active = cdata.last_active;
     }
     else if (data.notice == 'metadata') {
-      console.log("METADATA!");
+      var metadata = data.metadata;
+      var sid = data.session_id;
+      streams[sid].geometry = metadata.geometry;
+      streams[sid].ready = true;
+      // TODO announce resizes here
     }
     else if (data.notice == 'disconnect') {
-      console.log("DISCONNECT!");
+      var sid = data.session_id;
+      delete streams[sid];
     }
   }
-  else {
-    console.log('response ehhhh?');
+  else if (data.response) {
+    if (data.response == 'sessions') {
+      var sessions = data.sessions;
+      for (var i = 0; i < sessions.length; ++i) {
+        var session = sessions[i];
+        var sid = session.session_id;
+        if (!streams[sid]) streams[sid] = {};
+        streams[sid].id          = sid;
+        streams[sid].user        = session.user;
+        streams[sid].last_active = session.last_active;
+        streams[sid].geometry    = session.geometry;
+        streams[sid].ready       = true;
+      }
+    }
   }
 });
 
