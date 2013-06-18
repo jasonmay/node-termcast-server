@@ -18,8 +18,10 @@ Make sure you have a termcast server running from here: https://github.com/jason
 
 Take note of where the **connections.sock** unix socket is hosted and place the full page in your config:
 
+```
 cp config.json.example config.json
 <edit config.json>
+```
 
 Then you should be good to go.
 
