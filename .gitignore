@@ -4,3 +4,4 @@ node_modules
 *.la
 .libs
 /build
+/config.json
