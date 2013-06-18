@@ -5,7 +5,6 @@ Installation
 ------------
 
 ```
-make
 npm install
 ```
 
@@ -16,7 +15,7 @@ The server doesn't do much except list streams on an unstyled static page using 
 
 Make sure you have a termcast server running from here: https://github.com/jasonmay/app-termcast-server
 
-Take note of where the **connections.sock** unix socket is hosted and place the full page in your config:
+Take note of where the **connections.sock** unix socket is hosted and place the full path in your config:
 
 ```
 cp config.json.example config.json
