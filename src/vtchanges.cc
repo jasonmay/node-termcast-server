@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <node.h>
 
+#include <string>
+
 #include "vtchanges.h"
 
 using namespace v8;
@@ -109,15 +111,17 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       vterm_screen_get_cell(vt_screen, pos, &cell);
 
       //fprintf(stderr, "Value: %d at r%d c%d\n", cell.chars[0], pos.row, pos.col);
-      Handle<Array> foreground = Array::New(3);
-      foreground->Set(Integer::New(0), Integer::New(cell.fg.red));
-      foreground->Set(Integer::New(1), Integer::New(cell.fg.green));
-      foreground->Set(Integer::New(2), Integer::New(cell.fg.blue));
+      std::string foreground_str = "";
+      foreground_str.push_back((char)cell.fg.red);
+      foreground_str.push_back((char)cell.fg.green);
+      foreground_str.push_back((char)cell.fg.blue);
+      Handle<String> foreground = String::New(foreground_str.c_str());
 
-      Handle<Array> background = Array::New(3);
-      background->Set(Integer::New(0), Integer::New(cell.bg.red));
-      background->Set(Integer::New(1), Integer::New(cell.bg.green));
-      background->Set(Integer::New(2), Integer::New(cell.bg.blue));
+      std::string background_str = "";
+      background_str.push_back((char)cell.fg.red);
+      background_str.push_back((char)cell.fg.green);
+      background_str.push_back((char)cell.fg.blue);
+      Handle<String> background = String::New(background_str.c_str());
 
       change->Set(String::New("fg"), foreground);
       change->Set(String::New("bg"), background);
