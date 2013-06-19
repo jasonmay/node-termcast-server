@@ -132,7 +132,7 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       change->Set(String::New("v"), cell_value);
 
       change_data->Set(Integer::New(2), change);
-      changes->Set(changes->Length() + 1, change_data);
+      changes->Set(changes->Length(), change_data);
     }
 
   }
