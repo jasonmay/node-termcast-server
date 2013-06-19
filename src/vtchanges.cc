@@ -108,7 +108,7 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       VTermScreenCell cell;
       vterm_screen_get_cell(vt_screen, pos, &cell);
 
-      fprintf(stderr, "Value: %d at r%d c%d\n", cell.chars[0], pos.row, pos.col);
+      //fprintf(stderr, "Value: %d at r%d c%d\n", cell.chars[0], pos.row, pos.col);
       Handle<Array> foreground = Array::New(3);
       foreground->Set(Integer::New(0), Integer::New(cell.fg.red));
       foreground->Set(Integer::New(1), Integer::New(cell.fg.green));
