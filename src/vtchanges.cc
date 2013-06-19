@@ -126,6 +126,11 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       change->Set(String::New("fg"), foreground);
       change->Set(String::New("bg"), background);
 
+      Handle<Array> cell_value = Array::New(cell.width);
+      for (int i = 0; i < cell.width; ++i)
+        cell_value->Set(Integer::New(i), Integer::New(cell.chars[i]));
+      change->Set(String::New("v"), cell_value);
+
       change_data->Set(Integer::New(2), change);
       changes->Set(changes->Length() + 1, change_data);
     }
