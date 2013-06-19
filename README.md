@@ -25,7 +25,7 @@ cp config.json.example config.json
 Then you should be good to go.
 
 ```
-node server.js
+./bin/server
 ```
 
 TODO
