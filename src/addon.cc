@@ -8,11 +8,11 @@ Handle<Value> CreateObject(const Arguments& args) {
   return scope.Close(VTChanges::NewInstance(args));
 }
 
-void InitAll(Handle<Object> exports, Handle<Object> module) {
+void InitAll(Handle<Object> exports) {
   VTChanges::Init();
 
-  module->Set(String::NewSymbol("exports"),
-      FunctionTemplate::New(CreateObject)->GetFunction());
+  exports->Set(String::NewSymbol("create"),
+    FunctionTemplate::New(CreateObject)->GetFunction());
 }
 
 NODE_MODULE(vtchanges, InitAll)
