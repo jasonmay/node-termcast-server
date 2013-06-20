@@ -5,6 +5,8 @@ Installation
 ------------
 
 ```
+npm install -g node-gyp
+node-gyp rebuild
 npm install
 ```
 

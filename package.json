@@ -12,5 +12,8 @@
         "event-stream" : "3.0.x",
         "JSONStream" : "0.6.x"
     },
+    "scripts": {
+        "preinstall": "cd deps/libvterm && make"
+    },
     "license": "MIT"
 }
