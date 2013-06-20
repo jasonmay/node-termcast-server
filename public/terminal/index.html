@@ -32,7 +32,7 @@
   socket.on('draw', function(data) {
     canvas.streamer_username = 'UserGoesHere';
     update_canvas(data, canvas.getContext('2d'), screen, 80, 24);
-    console.log(data);
+    //console.log(data);
   });
   socket.on('disconnect', function() { window.location = '/'; });
   </script>

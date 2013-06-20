@@ -73,6 +73,7 @@ function update_canvas(data, context, screen, cols, lines) {
     if (typeof(data) === 'object') {
         for (j = 0; j < data.length; j++) {
             var change = data[j];
+            //if (change && change[1] == 0) console.log(change);
             var col  = change[0],
                 line  = change[1],
                 diff = canonicalize_data(change[2]);
