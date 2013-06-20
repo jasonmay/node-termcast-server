@@ -17,7 +17,7 @@
 <div id="notice"> </div>
 
   <script type="text/javascript" charset="utf-8">
-    var socket = io.connect('http://n.jmay.me');
+    var socket = io.connect(window.location.origin);
     socket.emit('id', window.location.search.slice(1));
 
     var canvas = document.getElementById('terminal_canvas');
