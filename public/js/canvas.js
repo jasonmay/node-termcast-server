@@ -179,11 +179,12 @@ function c_update_cell_fg(col, line, context, diff, screen) {
         }
         else {
             color = map[fg];
+            color = "rgb("+(fg & 0x0000ff) + ", " + ((fg & 0x00ff00) >> 8) + ", " + ((fg & 0xff0000) >> 16) + ")";
         }
     }
     else {
         set_screen_value(screen, col, line, 'fg', diff.fg);
-        color = map[diff.fg];
+            color = "rgb("+(diff.fg & 0x0000ff) + ", " + ((diff.fg & 0x00ff00) >> 8) + ", " + ((diff.fg & 0xff0000) >> 16) + ")";
     }
 
 

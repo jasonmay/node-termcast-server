@@ -142,25 +142,22 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       VTermScreenCell cell;
       vterm_screen_get_cell(vt_screen, pos, &cell);
 
-      //fprintf(stderr, "Value: %d at r%d c%d\n", cell.chars[0], pos.row, pos.col);
-      std::string foreground_str = "";
-      foreground_str.push_back((char)cell.fg.red);
-      foreground_str.push_back((char)cell.fg.green);
-      foreground_str.push_back((char)cell.fg.blue);
-      Handle<String> foreground = String::NewSymbol(foreground_str.c_str());
+      Handle<Integer> foreground = Integer::New(cell.fg.red + (cell.fg.green << 8) + (cell.fg.blue << 16));
 
-      std::string background_str = "";
-      background_str.push_back((char)cell.fg.red);
-      background_str.push_back((char)cell.fg.green);
-      background_str.push_back((char)cell.fg.blue);
-      Handle<String> background = String::NewSymbol(background_str.c_str());
+      //std::string background_str = "";
+      //background_str.push_back((char)cell.bg.red);
+      //background_str.push_back((char)cell.bg.green);
+      //background_str.push_back((char)cell.bg.blue);
+      //Handle<String> background = String::New(background_str.c_str());
 
       change->Set(String::NewSymbol("fg"), foreground);
-      change->Set(String::NewSymbol("bg"), background);
+      //change->Set(String::NewSymbol("bg"), background);
 
       Handle<Array> cell_value = Array::New(cell.width);
+
       for (int i = 0; i < cell.width; ++i)
-        cell_value->Set(Integer::New(i), Integer::New(cell.chars[i]));
+        cell_value->Set(Integer::New(i), Integer::New((uint32_t)cell.chars[i]));
+
       change->Set(String::NewSymbol("v"), cell_value);
 
       change_data->Set(Integer::New(2), change);
