@@ -5,18 +5,36 @@
   <title>Termcast</title>
   <script src="../js/jquery-2.0.1.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="../js/canvas.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="../css/terminal.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+<div id="terminal">
+  <canvas id="terminal_canvas">
+    <div id="container"> </div>
+  </canvas>
+</div>
+<div id="notice"> </div>
+
   <script type="text/javascript" charset="utf-8">
     var socket = io.connect('http://n.jmay.me');
     socket.emit('id', window.location.search.slice(1));
+
+    var canvas = document.getElementById('terminal_canvas');
     socket.on('ready', function () {
-      alert("Success!!");
+      $('#terminal').show();
+      console.log("Success!!");
+      init_canvas(canvas, 80, 24);
     });
     socket.on('notfound', function () {
-      alert("Not found!!");
+      window.location = '/';
     });
-    socket.on('draw', function(data) { console.log(data); });
+  socket.on('draw', function(data) {
+    canvas.streamer_username = 'UserGoesHere';
+    update_canvas(data, canvas.getContext('2d'), screen, 80, 24);
+    console.log(data);
+  });
+  socket.on('disconnect', function() { window.location = '/'; });
   </script>
-</head>
-<body>
 </body>
 </html>

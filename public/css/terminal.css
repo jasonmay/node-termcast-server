@@ -1,0 +1,42 @@
+#caption {
+    margin-left:  0;
+    background-color: black;
+    color: #bbb;
+    border: solid 1px white;
+    font-weight: bold;
+    text-align: center;
+    padding: 3px 10px 3px 10px;
+    font-size: 125%;
+    letter-spacing: 2;
+}
+
+#terminal_canvas {
+    margin-left: 0;
+    padding: 10px;
+    /*width: 50em;*/
+
+    background-color: black;
+    font-family: monaco, consolas, lucida console, monospace;
+    /* font-size: 80%; */
+    border: solid 1px white;
+    border-top: 0;
+
+}
+
+#terminal {
+    margin: 0 auto;
+    box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -moz-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -webkit-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+}
+
+#notice {
+    color: #b00;
+    font-weight: bold;
+}
+
+.legend {
+    color: black;
+    background-color: white;
+}
+
