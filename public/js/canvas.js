@@ -26,25 +26,6 @@ var bold_color_map = [
     '#6d75ea', '#ed73fc', '#73fafd', '#ffffff'
 ];
 
-function color_cell(cell, diff) {
-
-    var color;
-
-    if (diff.bo) {
-        color = bold_color_map[diff.fg];
-    }
-    else {
-        color = color_map[diff.fg];
-    }
-
-    bg_color = color_map[diff.bg];
-
-    cell.css({
-        color: color,
-        'background-color': bg_color
-    });
-}
-
 var cell_height = 12;
 var spacing     = 1.25;
 function set_font(context) {
