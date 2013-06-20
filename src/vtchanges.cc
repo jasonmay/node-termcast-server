@@ -27,17 +27,46 @@ void VTChanges::Init() {
   constructor = Persistent<Function>::New(tpl->GetFunction());
 }
 
-static void putglyph_hook(VTermPos pos, void *user) {
-  Handle<Array> *list = reinterpret_cast<Handle<Array>*>(user);
+static int vt_damage(VTermRect rect, void *user) {
+  Handle<Object> *cdata = reinterpret_cast<Handle<Object>*>(user);
+  if ((*cdata)->Get(String::New("cells"))->IsUndefined()) {
+    (*cdata)->Set(String::New("cells"), Array::New(0));
+  }
 
-  if ((*list)->Get(Integer::New(pos.row))->IsUndefined())
-    (*list)->Set(Integer::New(pos.row), Array::New(0));
+#define VT_CELLS_ARRAY (Handle<Array>::Cast( \
+                          (*cdata)->Get(String::New("cells")) \
+                        ))
 
-  Local<Object> cell_data = Object::New();
+  int col, row;
+  for (row = rect.start_row; row < rect.end_row; ++row) {
+    if (VT_CELLS_ARRAY->Get(Integer::New(row))->IsUndefined())
+      VT_CELLS_ARRAY->Set(Integer::New(row), Array::New(0));
 
-  Handle<Array>::Cast((*list)->Get(Integer::New(pos.row)))->Set(Integer::New(pos.col), cell_data);
+    for (col = rect.start_col; col < rect.end_col; ++col) {
+      Local<Object> cell_data = Object::New();
+      Handle<Array>::Cast(VT_CELLS_ARRAY->Get(Integer::New(row)))->Set(Integer::New(col), cell_data);
+    }
+  }
 
+#undef VT_CELLS_ARRAY
+  return 1;
 }
+
+static int vt_resize(int rows, int cols, void *user) {
+  Handle<Object> *cdata = reinterpret_cast<Handle<Object>*>(user);
+
+  if ((*cdata)->Get(String::New("resize"))->IsUndefined()) {
+    (*cdata)->Set(String::New("resize"), Array::New(2));
+  }
+  Handle<Array>::Cast((*cdata)->Get(String::New("resize")))->Set(Integer::New(0), Integer::New(rows));
+  Handle<Array>::Cast((*cdata)->Get(String::New("resize")))->Set(Integer::New(1), Integer::New(cols));
+
+  return 1;
+}
+
+static VTermScreenCallbacks screen_cbs = {
+  &vt_damage, NULL, NULL, NULL, NULL, NULL, &vt_resize, NULL, NULL
+};
 
 Handle<Value> VTChanges::New(const Arguments& args) {
   HandleScope scope;
@@ -48,6 +77,7 @@ Handle<Value> VTChanges::New(const Arguments& args) {
 #endif
   obj->vt = vterm_new(args[0]->Uint32Value(), args[1]->Uint32Value());
   VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
+
   vterm_screen_reset(vt_screen, 1);
   obj->Wrap(args.This());
 
@@ -79,21 +109,23 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
   }
   String::Utf8Value str(args[0]);
 
-  Handle<Array> list = Array::New(0);
-  VTermState *vt_state = vterm_obtain_state(obj->vt);
+  Handle<Object> cdata = Object::New();
   VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
 
-  set_putglyph_hook_hack(obj->vt, &putglyph_hook, &list);
+  vterm_screen_set_callbacks(vt_screen, &screen_cbs, &cdata);
   vterm_push_bytes(obj->vt, *str, args[0]->ToString()->Length());
 
   Handle<Array> changes = Array::New(0);
 
+  Handle<Array> cells = Handle<Array>::Cast(cdata->Get(String::New("cells")));
+  if (cells->IsUndefined()) cells = Array::New(0);
+
   // TODO use GetPropertyNames and loop through that instead (perf)
-  for (uint32_t row = 0; row < list->Length(); ++row) {
-    if (list->Get(Integer::New(row))->IsUndefined())
+  for (uint32_t row = 0; row < cells->Length(); ++row) {
+    if (cells->Get(Integer::New(row))->IsUndefined())
       continue;
 
-    Handle<Array> row_array = Handle<Array>::Cast(list->Get(Integer::New(row)));
+    Handle<Array> row_array = Handle<Array>::Cast(cells->Get(Integer::New(row)));
    for (uint32_t col = 0; col < row_array->Length(); ++col) {
      if (row_array->Get(Integer::New(col))->IsUndefined())
        continue;
