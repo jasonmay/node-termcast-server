@@ -29,12 +29,12 @@ void VTChanges::Init() {
 
 static int vt_damage(VTermRect rect, void *user) {
   Handle<Object> *cdata = reinterpret_cast<Handle<Object>*>(user);
-  if ((*cdata)->Get(String::New("cells"))->IsUndefined()) {
-    (*cdata)->Set(String::New("cells"), Array::New(0));
+  if ((*cdata)->Get(String::NewSymbol("cells"))->IsUndefined()) {
+    (*cdata)->Set(String::NewSymbol("cells"), Array::New(0));
   }
 
 #define VT_CELLS_ARRAY (Handle<Array>::Cast( \
-                          (*cdata)->Get(String::New("cells")) \
+                          (*cdata)->Get(String::NewSymbol("cells")) \
                         ))
 
   int col, row;
@@ -55,11 +55,11 @@ static int vt_damage(VTermRect rect, void *user) {
 static int vt_resize(int rows, int cols, void *user) {
   Handle<Object> *cdata = reinterpret_cast<Handle<Object>*>(user);
 
-  if ((*cdata)->Get(String::New("resize"))->IsUndefined()) {
-    (*cdata)->Set(String::New("resize"), Array::New(2));
+  if ((*cdata)->Get(String::NewSymbol("resize"))->IsUndefined()) {
+    (*cdata)->Set(String::NewSymbol("resize"), Array::New(2));
   }
-  Handle<Array>::Cast((*cdata)->Get(String::New("resize")))->Set(Integer::New(0), Integer::New(rows));
-  Handle<Array>::Cast((*cdata)->Get(String::New("resize")))->Set(Integer::New(1), Integer::New(cols));
+  Handle<Array>::Cast((*cdata)->Get(String::NewSymbol("resize")))->Set(Integer::New(0), Integer::New(rows));
+  Handle<Array>::Cast((*cdata)->Get(String::NewSymbol("resize")))->Set(Integer::New(1), Integer::New(cols));
 
   return 1;
 }
@@ -117,7 +117,7 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
 
   Handle<Array> changes = Array::New(0);
 
-  Handle<Array> cells = Handle<Array>::Cast(cdata->Get(String::New("cells")));
+  Handle<Array> cells = Handle<Array>::Cast(cdata->Get(String::NewSymbol("cells")));
   if (cells->IsUndefined()) cells = Array::New(0);
 
   // TODO use GetPropertyNames and loop through that instead (perf)
@@ -147,21 +147,21 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       foreground_str.push_back((char)cell.fg.red);
       foreground_str.push_back((char)cell.fg.green);
       foreground_str.push_back((char)cell.fg.blue);
-      Handle<String> foreground = String::New(foreground_str.c_str());
+      Handle<String> foreground = String::NewSymbol(foreground_str.c_str());
 
       std::string background_str = "";
       background_str.push_back((char)cell.fg.red);
       background_str.push_back((char)cell.fg.green);
       background_str.push_back((char)cell.fg.blue);
-      Handle<String> background = String::New(background_str.c_str());
+      Handle<String> background = String::NewSymbol(background_str.c_str());
 
-      change->Set(String::New("fg"), foreground);
-      change->Set(String::New("bg"), background);
+      change->Set(String::NewSymbol("fg"), foreground);
+      change->Set(String::NewSymbol("bg"), background);
 
       Handle<Array> cell_value = Array::New(cell.width);
       for (int i = 0; i < cell.width; ++i)
         cell_value->Set(Integer::New(i), Integer::New(cell.chars[i]));
-      change->Set(String::New("v"), cell_value);
+      change->Set(String::NewSymbol("v"), cell_value);
 
       change_data->Set(Integer::New(2), change);
       changes->Set(changes->Length(), change_data);
