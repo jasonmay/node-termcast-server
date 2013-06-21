@@ -653,7 +653,7 @@ static void set_mode(VTermState *state, int num, int val)
     break;
 
   default:
-    fprintf(stderr, "libvterm: Unknown mode %d\n", num);
+    /* fprintf(stderr, "libvterm: Unknown mode %d\n", num); */
     return;
   }
 }
@@ -746,7 +746,7 @@ static void set_dec_mode(VTermState *state, int num, int val)
     break;
 
   default:
-    fprintf(stderr, "libvterm: Unknown DEC mode %d\n", num);
+    /* fprintf(stderr, "libvterm: Unknown DEC mode %d\n", num); */
     return;
   }
 }
