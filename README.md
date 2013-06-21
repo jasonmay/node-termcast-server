@@ -13,8 +13,6 @@ npm install
 Running the server
 ------------------
 
-The server doesn't do much except list streams on an unstyled static page using AJAX requests.
-
 Make sure you have a termcast server running from here: https://github.com/jasonmay/app-termcast-server
 
 Take note of where the **connections.sock** unix socket is hosted and place the full path in your config:
@@ -33,4 +31,15 @@ Then you should be good to go.
 TODO
 ----
 
-Decide on how to communicate between the server and the static site. Either a templating engine or just straight-up AJAX to a minimal endpoint server would suffice.
+Need to track the cursor. The canvas doesn't have anything for this yet.
+
+Need to track background colors.
+
+Need to track other cell attributes, like boldness.
+
+BUGS
+----
+
+Oh there are tons of them. Don't get me started. Check the Github issues for anything:
+
+https://github.com/jasonmay/node-termcast-server/issues
