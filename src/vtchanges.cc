@@ -4,6 +4,8 @@
 
 #include <string>
 
+// #include <iostream>
+
 #include "vtchanges.h"
 
 using namespace v8;
@@ -21,6 +23,8 @@ void VTChanges::Init() {
   // Prototype
   tpl->PrototypeTemplate()->Set(String::NewSymbol("process"),
       FunctionTemplate::New(Process)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("resize"),
+      FunctionTemplate::New(Resize)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("finish"),
       FunctionTemplate::New(Finish)->GetFunction());
 
@@ -77,7 +81,6 @@ Handle<Value> VTChanges::New(const Arguments& args) {
 #endif
   obj->vt = vterm_new(args[0]->Uint32Value(), args[1]->Uint32Value());
   VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
-
   vterm_screen_reset(vt_screen, 1);
   obj->Wrap(args.This());
 
@@ -111,6 +114,20 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
 
   Handle<Object> cdata = Object::New();
   VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
+
+  /*
+  char *foo = *str;
+  for (size_t s = 0; s < args[0]->ToString()->Length(); ++s) {
+    if (s % 10 == 0) std::cerr << std::endl;
+    if (foo[s] >= 32 && foo[s] < 127)
+      std::cerr << foo[s] << ":";
+    else if (foo[s] == '\033')
+      std::cerr << "\033[0;31me\033[m:";
+    else
+      std::cerr << "\033[0;32m" << (int)(uint8_t)foo[s] << "\033[m" << ":";
+  }
+  std::cerr << std::endl;
+  */
 
   vterm_screen_set_callbacks(vt_screen, &screen_cbs, &cdata);
   vterm_push_bytes(obj->vt, *str, args[0]->ToString()->Length());
@@ -155,7 +172,7 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
 
       Handle<Array> cell_value = Array::New(cell.width);
 
-      for (int i = 0; i < cell.width; ++i)
+      for (int i = 0; i < 6; ++i)
         cell_value->Set(Integer::New(i), Integer::New((uint32_t)cell.chars[i]));
 
       change->Set(String::NewSymbol("v"), cell_value);
@@ -167,6 +184,18 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
   }
 
   return scope.Close(changes);
+}
+
+Handle<Value> VTChanges::Resize(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsNumber()) {
+    THROW_ERROR_EXCEPTION("Usage: .resize(rows, cols)");
+  }
+
+  VTChanges* obj = ObjectWrap::Unwrap<VTChanges>(args.This());
+  vterm_set_size(obj->vt, args[0]->IntegerValue(), args[1]->IntegerValue());
+  return scope.Close(Undefined());
 }
 
 Handle<Value> VTChanges::Finish(const Arguments& args) {

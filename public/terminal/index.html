@@ -17,24 +17,28 @@
 <div id="notice"> </div>
 
   <script type="text/javascript" charset="utf-8">
-    var socket = io.connect(window.location.origin);
-    socket.emit('id', window.location.search.slice(1));
-
     var canvas = document.getElementById('terminal_canvas');
-    socket.on('ready', function () {
-      $('#terminal').show();
-      console.log("Success!!");
-      init_canvas(canvas, 80, 24);
-    });
+    var socket = io.connect(window.location.origin);
+    var stream_id = window.location.search.slice(1);
+    $('#terminal').hide();
+    socket.emit('id', stream_id);
     socket.on('notfound', function () {
       window.location = '/';
     });
-  socket.on('draw', function(data) {
-    canvas.streamer_username = 'UserGoesHere';
-    update_canvas(data, canvas.getContext('2d'), screen, 80, 24);
-    //console.log(data);
-  });
-  socket.on('disconnect', function() { window.location = '/'; });
+    socket.on('closing', function() { socket.end(); window.location = '/'; });
+    socket.on('ready', function () {
+      $('#terminal').show();
+      $.get('/data/stream', {id: stream_id}).done(function(data) {
+        socket.emit('ready');
+        $('#terminal').show();
+        canvas.streamer_username = data.user;
+        init_canvas(canvas, data.geometry[0], data.geometry[1]);
+      });
+    });
+    socket.on('draw', function(data) {
+      update_canvas(data, canvas.getContext('2d'), screen);
+      //console.log(data);
+    });
   </script>
 </body>
 </html>

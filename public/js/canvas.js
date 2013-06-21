@@ -1,8 +1,4 @@
-var INTERVAL_ID;
-
 var DEBUG = 0;
-
-var pos_elems = [];
 
 function canonicalize_data(diff) {
     var newdiff = diff;
@@ -53,6 +49,9 @@ function get_screen_value(screen, col, line, key) {
 
 function init_canvas(canvas, cols, lines) {
     var context = canvas.getContext('2d');
+    if (!window.vtstate) window.vtstate = {};
+    window.vtstate.cols = cols;
+    window.vtstate.cols = lines;
 
     // get the width of the letter M in our font
     set_font(context);
@@ -73,7 +72,6 @@ function update_canvas(data, context, screen, cols, lines) {
     if (typeof(data) === 'object') {
         for (j = 0; j < data.length; j++) {
             var change = data[j];
-            //if (change && change[1] == 0) console.log(change);
             var col  = change[0],
                 line  = change[1],
                 diff = canonicalize_data(change[2]);
@@ -132,7 +130,7 @@ function c_update_cell_value(col, line, context, diff, screen) {
 
     c_update_cell_bg(col, line, context, diff, screen);
 
-    context.fillStyle = color_map[7];
+    context.fillStyle = '#c7c7c7';
     c_update_cell_fg(col, line, context, diff, screen);
 
     preserve_or_assign('v', col, line, diff, screen);
