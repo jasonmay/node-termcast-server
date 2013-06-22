@@ -1,21 +1,121 @@
-<html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!DOCTYPE html>
+<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 
+<head>
+	<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
   <title>Termcast</title>
-  <script src="js/jquery-2.0.1.min.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+
+
+  <link rel="stylesheet" href="css/foundation.css" />
+  <link rel="stylesheet" href="css/termcast.css" />
+
+
+  <script src="js/vendor/custom.modernizr.js"></script>
+
+</head>
+<body>
+
+	<div class="row">
+		<div class="large-12 columns">
+			<h2>Termcast</h2>
+			<p>Broadcast your work!</p>
+			<hr />
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="large-4 columns">
+			<h3>Streaming right now!</h3>
+      <div class="row">
+          <table id="streams-table">
+          <thead>
+            <tr>
+              <th>Broadcaster</th>
+              <th>Cols</th>
+              <th>Rows</th>
+            </tr>
+          </thead>
+          <tbody id="streams">
+          </tbody>
+          </table>
+      </div>
+		</div>
+
+		<div class="large-8 columns">
+			<h4>Features</h4>
+
+      <h5>libvterm</h5>
+      <p>This app is bundled with the libvterm library, which has plenty of awesome terminal emulation support and is wicked fast.</p>
+
+      <h5>256-color support</h5>
+
+      <p>Out of the box, thanks to the feature richness of libvterm, node-termcast-server will broadcast the colors very close to the way it looks in your terminal.</p>
+
+      <h5>Terminal Resizing in real-time</h5>
+
+      <p>The <a href="http://metacpan.org/module/App::Termcast">App::Termcast</a> client is good about sending resize signals to the server, so when you resize you terminal, you will see the terminal on the web resize in real-time, so there is no need to worry about the dimensions of your terminal!</p>
+
+
+		</div>
+	</div>
+
+  <script>
+  document.write('<script src=' +
+  ('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
+  '.js><\/script>')
+  </script>
+
+  <script src="js/foundation.min.js"></script>
+  <!--
+
+  <script src="js/foundation/foundation.js"></script>
+
+  <script src="js/foundation/foundation.alerts.js"></script>
+
+  <script src="js/foundation/foundation.clearing.js"></script>
+
+  <script src="js/foundation/foundation.cookie.js"></script>
+
+  <script src="js/foundation/foundation.dropdown.js"></script>
+
+  <script src="js/foundation/foundation.forms.js"></script>
+
+  <script src="js/foundation/foundation.joyride.js"></script>
+
+  <script src="js/foundation/foundation.magellan.js"></script>
+
+  <script src="js/foundation/foundation.orbit.js"></script>
+
+  <script src="js/foundation/foundation.reveal.js"></script>
+
+  <script src="js/foundation/foundation.section.js"></script>
+
+  <script src="js/foundation/foundation.tooltips.js"></script>
+
+  <script src="js/foundation/foundation.topbar.js"></script>
+
+  <script src="js/foundation/foundation.interchange.js"></script>
+
+  <script src="js/foundation/foundation.placeholder.js"></script>
+
+  -->
+
+  <script>
+    $(document).foundation();
     $(function() {
       $.get('/data/streams', function(data) {
         for (id in data) {
-          $('#streams').append("<li><a href=\"/terminal/index.html?" + id + "\">" + id + "</a></li>");
+          $('#streams').append(
+          "<tr><td><a href=\"/terminal/index.html?" + id +
+          "\">" + data[id].user + "</a></td><td>" +
+          data[id].geometry[0] + "</td><td>" +
+          data[id].geometry[1] + "</td>" +
+          "</li>");
         }
       });
     });
   </script>
-</head>
-<body>
-<ul id="streams">
-</ul>
 </body>
 </html>
