@@ -1,22 +1,46 @@
-<html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!DOCTYPE html>
+<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 
+<head>
+	<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
   <title>Termcast</title>
-  <script src="../js/jquery-2.0.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+  <link rel="stylesheet" href="../css/foundation.css" />
+  <link rel="stylesheet" href="../css/termcast.css" />
+  <link rel="stylesheet" href="../css/terminal.css" type="text/css" media="screen" charset="utf-8">
+
+  <script src="../js/vendor/custom.modernizr.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="../js/canvas.js" type="text/javascript" charset="utf-8"></script>
-  <link rel="stylesheet" href="../css/terminal.css" type="text/css" media="screen" charset="utf-8">
 </head>
 <body>
-<div id="terminal">
-  <canvas id="terminal_canvas">
-    <div id="container"> </div>
-  </canvas>
-</div>
-<div id="notice"> </div>
 
+	<div class="row">
+		<div class="large-12 columns">
+			<h2 id="streaming-announce">Streaming: </h2>
+			<hr />
+		</div>
+  </div>
+	<div class="row">
+		<div class="large-12 columns">
+      <div id="notice"> </div>
+      <div id="terminal">
+        <canvas id="terminal_canvas">
+          <div id="container"> </div>
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/jquery-2.0.1.min.js"></script>
+  <script src="../js/foundation.min.js"></script>
   <script type="text/javascript" charset="utf-8">
+    // initialize foundation stuff
+    $(document).foundation();
+
     var canvas = document.getElementById('terminal_canvas');
     var socket = io.connect(window.location.origin);
     var stream_id = window.location.search.slice(1);
@@ -35,6 +59,7 @@
         socket.emit('ready');
         $('#terminal').show();
         canvas.streamer_username = data.user;
+        $('#streaming-announce').text("Streaming: " + data.user);
         init_canvas(canvas, data.geometry[0], data.geometry[1]);
       });
     });
