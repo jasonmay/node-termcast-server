@@ -39,9 +39,11 @@ static int vt_damage(VTermRect rect, void *user) {
     (*cdata)->Set(String::NewSymbol("cells"), Array::New(0));
   }
 
-#define VT_CELLS_ARRAY (Handle<Array>::Cast( \
-                          (*cdata)->Get(String::NewSymbol("cells")) \
-                        ))
+#define VT_CELLS_ARRAY (                              \
+          Handle<Array>::Cast(                        \
+            (*cdata)->Get(String::NewSymbol("cells")) \
+          )                                           \
+        )
 
   int col, row;
   for (row = rect.start_row; row < rect.end_row; ++row) {
