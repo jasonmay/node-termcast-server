@@ -36,6 +36,7 @@
                 <th>Broadcaster</th>
                 <th>Cols</th>
                 <th>Rows</th>
+                <th>Viewers</th>
               </tr>
             </thead>
             <tbody id="streams"> </tbody>
@@ -122,7 +123,8 @@ termcast --host [termcast host]
           "<tr><td><a href=\"/terminal/index.html?" + id +
           "\">" + data[id].user + "</a></td><td>" +
           data[id].geometry[0] + "</td><td>" +
-          data[id].geometry[1] + "</td>" +
+          data[id].geometry[1] + "</td><td>" +
+          (data[id].viewers ? data[id].viewers : 0) + "</td>" +
           "</li>");
         }
         if (!anybodyStreaming) {
