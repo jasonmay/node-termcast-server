@@ -82,6 +82,7 @@ function update_canvas(data, context, screen, cols, lines) {
                 // cursor
                 if (diff.c) {
                   if (window.vtstate && window.vtstate.cursor)
+                    // redraw so cursor background disappears
                     c_update_cell_value(
                       window.vtstate.cursor[0],
                       window.vtstate.cursor[1],
@@ -132,7 +133,6 @@ function c_update_cell_value(col, line, context, diff, screen) {
 
     var mod_height = Math.floor(cell_height * spacing);
 
-    // FIXME track previous bg so we aren't clobbering!!
     context.fillStyle = '#000';
     context.fillRect(
         col * cell_width,
@@ -147,6 +147,10 @@ function c_update_cell_value(col, line, context, diff, screen) {
 
     preserve_or_assign('v', col, line, diff, screen);
 
+    if (typeof(diff.v) === 'undefined')
+      diff.v = " ";
+
+
     context.fillText(diff.v, col * cell_width, line * mod_height);
 }
 
@@ -154,15 +158,21 @@ function c_update_cell_bg(col, line, context, diff, screen) {
 
     preserve_or_assign('bg', col, line, diff, screen);
 
-    var diff_bg = diff.bg;
+    var bg = diff.bg;
 
-    if (diff.c) diff_bg = 7;
+    var bg_color;
 
-    var bg_color   = color_map[diff_bg];
+    if (diff.c)
+      bg_color = "#c7c7c7";
+    else if ('bg' in diff)
+      bg_color = "rgb("+(bg & 0x0000ff) + ", " + ((bg & 0x00ff00) >> 8) + ", " + ((bg & 0xff0000) >> 16) + ")";
+    else
+      return;
+
+
     var cell_width = context.measureText('M').width;
 
     var mod_height = Math.floor(cell_height * spacing);
-
 
     if (bg_color) context.fillStyle = bg_color;
     context.fillRect(
@@ -193,7 +203,6 @@ function c_update_cell_fg(col, line, context, diff, screen) {
             color = map[7];
         }
         else {
-            color = map[fg];
             color = "rgb("+(fg & 0x0000ff) + ", " + ((fg & 0x00ff00) >> 8) + ", " + ((fg & 0xff0000) >> 16) + ")";
         }
     }

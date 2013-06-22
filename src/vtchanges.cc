@@ -241,15 +241,10 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       vterm_screen_get_cell(vt_screen, pos, &cell);
 
       Handle<Integer> foreground = Integer::New(cell.fg.red + (cell.fg.green << 8) + (cell.fg.blue << 16));
-
-      //std::string background_str = "";
-      //background_str.push_back((char)cell.bg.red);
-      //background_str.push_back((char)cell.bg.green);
-      //background_str.push_back((char)cell.bg.blue);
-      //Handle<String> background = String::New(background_str.c_str());
+      Handle<Integer> background = Integer::New(cell.bg.red + (cell.bg.green << 8) + (cell.bg.blue << 16));
 
       change->Set(String::NewSymbol("fg"), foreground);
-      //change->Set(String::NewSymbol("bg"), background);
+      change->Set(String::NewSymbol("bg"), background);
 
       Handle<Array> cell_value = Array::New(cell.width);
 
