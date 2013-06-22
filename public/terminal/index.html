@@ -25,7 +25,10 @@
     socket.on('notfound', function () {
       window.location = '/';
     });
-    socket.on('closing', function() { socket.end(); window.location = '/'; });
+    socket.on('closing', function() {
+      socket.disconnect();
+      window.location = '/';
+    });
     socket.on('ready', function () {
       $('#terminal').show();
       $.get('/data/stream', {id: stream_id}).done(function(data) {
