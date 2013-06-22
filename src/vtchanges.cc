@@ -23,6 +23,8 @@ void VTChanges::Init() {
   // Prototype
   tpl->PrototypeTemplate()->Set(String::NewSymbol("process"),
       FunctionTemplate::New(Process)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("snapshot"),
+      FunctionTemplate::New(Snapshot)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("resize"),
       FunctionTemplate::New(Resize)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("finish"),
@@ -100,6 +102,63 @@ Handle<Value> VTChanges::NewInstance(const Arguments& args) {
   Local<Object> instance = constructor->NewInstance(argc, argv);
 
   return scope.Close(instance);
+}
+
+Handle<Value> VTChanges::Snapshot(const Arguments& args) {
+  HandleScope scope;
+
+  VTChanges* obj = ObjectWrap::Unwrap<VTChanges>(args.This());
+
+  VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
+  VTermState *vt_state = vterm_obtain_state(obj->vt);
+
+  VTermColor default_fg, default_bg;
+  vterm_state_get_default_colors(vt_state, &default_fg, &default_bg);
+
+  int rows, cols;
+  vterm_get_size(obj->vt, &rows, &cols);
+
+  Handle<Array> changes = Array::New(0);
+
+  for (int row = 0; row < rows; ++row) {
+    for (int col = 0; col < cols; ++col) {
+
+      bool change_needed = false;
+
+      Handle<Array> change_data = Array::New(3);
+      change_data->Set(Integer::New(0), Integer::New(col));
+      change_data->Set(Integer::New(1), Integer::New(row));
+
+      VTermPos pos = {row, col};
+      VTermScreenCell cell;
+      vterm_screen_get_cell(vt_screen, pos, &cell);
+
+      Handle<Object> change = Object::New();
+      if (cell.width > 0 && cell.chars[0] && cell.chars[0] != 32) {
+
+        // Skip if cell.fg == cell.bg since you won't see the value anyway!
+        if (cell.fg.red != cell.bg.red ||
+                cell.fg.green != cell.bg.green ||
+                cell.fg.blue != cell.bg.blue) {
+          Handle<Integer> foreground = Integer::New(cell.fg.red + (cell.fg.green << 8) + (cell.fg.blue << 16));
+          change->Set(String::NewSymbol("fg"), foreground);
+
+          Handle<Array> cell_value = Array::New(cell.width);
+          for (int i = 0; i < cell.width; ++i) {
+            cell_value->Set(Integer::New(i), Integer::New((uint32_t)cell.chars[i]));
+            change->Set(String::NewSymbol("v"), cell_value);
+            change_data->Set(Integer::New(2), change);
+            change_needed = true;
+          }
+        }
+      }
+
+      if (change_needed)
+        changes->Set(changes->Length(), change_data);
+    }
+  }
+
+  return scope.Close(changes);
 }
 
 Handle<Value> VTChanges::Process(const Arguments& args) {

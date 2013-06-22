@@ -21,10 +21,10 @@ class VTChanges : public node::ObjectWrap {
   static v8::Persistent<v8::Function> constructor;
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Process(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Snapshot(const v8::Arguments& args);
   static v8::Handle<v8::Value> Resize(const v8::Arguments& args);
   static v8::Handle<v8::Value> Finish(const v8::Arguments& args);
   VTerm *vt;
-  int (*orig_putglyph)(VTermGlyphInfo *info, VTermPos pos, void *user);
 };
 
 #define THROW_ERROR_EXCEPTION(x) ThrowException(Exception::Error(String::New(x)))
