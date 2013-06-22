@@ -53,19 +53,19 @@
       socket.disconnect();
       window.location = '/';
     });
+    socket.on('draw', function(data) {
+      console.log(data);
+      update_canvas(data, canvas.getContext('2d'), screen);
+    });
     socket.on('ready', function () {
       $('#terminal').show();
       $.get('/data/stream', {id: stream_id}).done(function(data) {
-        socket.emit('ready');
         $('#terminal').show();
+        socket.emit('ready', stream_id);
         canvas.streamer_username = data.user;
         $('#streaming-announce').text("Streaming: " + data.user);
         init_canvas(canvas, data.geometry[0], data.geometry[1]);
       });
-    });
-    socket.on('draw', function(data) {
-      update_canvas(data, canvas.getContext('2d'), screen);
-      //console.log(data);
     });
   </script>
 </body>
