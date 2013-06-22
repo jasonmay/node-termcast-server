@@ -54,7 +54,6 @@
       window.location = '/';
     });
     socket.on('draw', function(data) {
-      console.log(data);
       update_canvas(data, canvas.getContext('2d'), screen);
     });
     socket.on('ready', function () {
