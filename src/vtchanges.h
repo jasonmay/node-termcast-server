@@ -29,4 +29,6 @@ class VTChanges : public node::ObjectWrap {
 
 #define THROW_ERROR_EXCEPTION(x) ThrowException(Exception::Error(String::New(x)))
 
+#define VT_SET_ELEM(A, B, C) (A)->Set(Integer::New(B), (C))
+
 #endif

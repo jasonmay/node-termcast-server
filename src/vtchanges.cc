@@ -72,8 +72,27 @@ static int vt_resize(int rows, int cols, void *user) {
   return 1;
 }
 
+static int vt_movecursor(VTermPos pos, VTermPos oldpos, int visible, void *user) {
+  Handle<Object> *cdata = reinterpret_cast<Handle<Object>*>(user);
+
+#define VT_CURSOR_ARRAY (                              \
+          Handle<Array>::Cast(                         \
+            (*cdata)->Get(String::NewSymbol("cursor")) \
+          )                                            \
+        )
+
+  if ((*cdata)->Get(String::NewSymbol("cursor"))->IsUndefined())
+    (*cdata)->Set(String::NewSymbol("cursor"), Array::New(2));
+
+  VT_SET_ELEM(VT_CURSOR_ARRAY, 0, Integer::New(pos.col));
+  VT_SET_ELEM(VT_CURSOR_ARRAY, 1, Integer::New(pos.row));
+
+#undef VT_CURSOR_ARRAY
+  return 1;
+}
+
 static VTermScreenCallbacks screen_cbs = {
-  &vt_damage, NULL, NULL, NULL, NULL, NULL, &vt_resize, NULL, NULL
+  &vt_damage, NULL, &vt_movecursor, NULL, NULL, NULL, &vt_resize, NULL, NULL
 };
 
 Handle<Value> VTChanges::New(const Arguments& args) {
@@ -106,6 +125,7 @@ Handle<Value> VTChanges::NewInstance(const Arguments& args) {
   return scope.Close(instance);
 }
 
+// TODO push cursor data
 Handle<Value> VTChanges::Snapshot(const Arguments& args) {
   HandleScope scope;
 
@@ -241,7 +261,21 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       change_data->Set(Integer::New(2), change);
       changes->Set(changes->Length(), change_data);
     }
+  }
 
+  if (!cdata->Get(String::NewSymbol("cursor"))->IsUndefined()) {
+    Handle<Array> change = Array::New(3);
+    Handle<Array> cursor =
+      Handle<Array>::Cast(cdata->Get(String::NewSymbol("cursor")));
+
+    Handle<Object> cval = Object::New();
+    cval->Set(String::NewSymbol("c"), Boolean::New(true));
+
+    VT_SET_ELEM(change, 0, cursor->Get(Integer::New(0)));
+    VT_SET_ELEM(change, 1, cursor->Get(Integer::New(1)));
+    VT_SET_ELEM(change, 2, cval);
+
+    changes->Set(changes->Length(), change);
   }
 
   return scope.Close(changes);

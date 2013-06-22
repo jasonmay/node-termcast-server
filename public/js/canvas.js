@@ -78,6 +78,18 @@ function update_canvas(data, context, screen, cols, lines) {
 
             if (diff) {
                 context.fillStyle = bold_color_map[0];
+
+                // cursor
+                if (diff.c) {
+                  if (window.vtstate && window.vtstate.cursor)
+                    c_update_cell_value(
+                      window.vtstate.cursor[0],
+                      window.vtstate.cursor[1],
+                      context, {}, screen);
+
+                    if (!window.vtstate) window.vtstate = {};
+                    window.vtstate.cursor = [col, line];
+                }
                 c_update_cell_value(col, line, context, diff, screen);
 
                 if (diff.disconnect) {
@@ -142,7 +154,11 @@ function c_update_cell_bg(col, line, context, diff, screen) {
 
     preserve_or_assign('bg', col, line, diff, screen);
 
-    var bg_color   = color_map[diff.bg];
+    var diff_bg = diff.bg;
+
+    if (diff.c) diff_bg = 7;
+
+    var bg_color   = color_map[diff_bg];
     var cell_width = context.measureText('M').width;
 
     var mod_height = Math.floor(cell_height * spacing);
