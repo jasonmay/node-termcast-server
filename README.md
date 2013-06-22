@@ -1,6 +1,10 @@
 node-termcast-server
 ====================
 
+Broadcast your work!
+
+![Preview](https://github.com/jasonmay/node-termcast-server/raw/master/doc/preview.png "node-termcast-server")
+
 Installation
 ------------
 
