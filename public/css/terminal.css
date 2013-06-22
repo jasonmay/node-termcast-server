@@ -21,13 +21,13 @@
     border: solid 1px white;
     border-top: 0;
 
+    box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -moz-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -webkit-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
 }
 
 #terminal {
     margin: 0 auto;
-    box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
-    -moz-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
-    -webkit-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
 }
 
 #notice {
