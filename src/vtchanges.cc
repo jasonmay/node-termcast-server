@@ -165,6 +165,14 @@ Handle<Value> VTChanges::Snapshot(const Arguments& args) {
           Handle<Integer> foreground = Integer::New(cell.fg.red + (cell.fg.green << 8) + (cell.fg.blue << 16));
           change->Set(String::NewSymbol("fg"), foreground);
 
+          if (cell.bg.red   != default_bg.red   ||
+              cell.bg.green != default_bg.green ||
+              cell.bg.blue  != default_bg.blue) {
+            Handle<Integer> background = Integer::New(cell.bg.red + (cell.bg.green << 8) + (cell.bg.blue << 16));
+            change->Set(String::NewSymbol("bg"), background);
+            change_needed = true;
+          }
+
           Handle<Array> cell_value = Array::New(cell.width);
           for (int i = 0; i < cell.width; ++i) {
             cell_value->Set(Integer::New(i), Integer::New((uint32_t)cell.chars[i]));
@@ -179,6 +187,19 @@ Handle<Value> VTChanges::Snapshot(const Arguments& args) {
         changes->Set(changes->Length(), change_data);
     }
   }
+
+  VTermPos cursorpos;
+  vterm_state_get_cursorpos(vt_state, &cursorpos);
+
+  Handle<Object> cval = Object::New();
+  cval->Set(String::NewSymbol("c"), Boolean::New(true));
+
+  Handle<Array> cursor_change = Array::New(3);
+  VT_SET_ELEM(cursor_change, 0, Integer::New(cursorpos.col));
+  VT_SET_ELEM(cursor_change, 1, Integer::New(cursorpos.row));
+  VT_SET_ELEM(cursor_change, 2, cval);
+
+  changes->Set(changes->Length(), cursor_change);
 
   return scope.Close(changes);
 }
