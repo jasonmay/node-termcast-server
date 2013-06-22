@@ -51,7 +51,7 @@ function init_canvas(canvas, cols, lines) {
     var context = canvas.getContext('2d');
     if (!window.vtstate) window.vtstate = {};
     window.vtstate.cols = cols;
-    window.vtstate.cols = lines;
+    window.vtstate.lines = lines;
 
     // get the width of the letter M in our font
     set_font(context);
