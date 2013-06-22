@@ -1,1 +1,3 @@
 table#streams-table { width: 100%; }
+
+#not-streaming { display: none; }

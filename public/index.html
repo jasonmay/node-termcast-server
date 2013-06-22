@@ -26,24 +26,33 @@
 	</div>
 
 	<div class="row">
-		<div class="large-4 columns">
-			<h3>Streaming right now!</h3>
-      <div class="row">
+		<div class="large-6 columns">
+      <div id="is-streaming">
+        <h3>Streaming right now!</h3>
+        <div class="row">
           <table id="streams-table">
-          <thead>
-            <tr>
-              <th>Broadcaster</th>
-              <th>Cols</th>
-              <th>Rows</th>
-            </tr>
-          </thead>
-          <tbody id="streams">
-          </tbody>
+            <thead>
+              <tr>
+                <th>Broadcaster</th>
+                <th>Cols</th>
+                <th>Rows</th>
+              </tr>
+            </thead>
+            <tbody id="streams"> </tbody>
           </table>
+        </div>
+      </div>
+      <div id="not-streaming">
+        <h3>No streams at this time. :(</h3>
+        <p>Or you can start streaming yourself!</p>
+        <pre>
+cpanm App::Termcast
+termcast --host [termcast host]
+        </pre>
       </div>
 		</div>
 
-		<div class="large-8 columns">
+		<div class="large-6 columns">
 			<h4>Features</h4>
 
       <h5>libvterm</h5>
@@ -106,13 +115,19 @@
     $(document).foundation();
     $(function() {
       $.get('/data/streams', function(data) {
+        var anybodyStreaming = false;
         for (id in data) {
+          anybodyStreaming = true;
           $('#streams').append(
           "<tr><td><a href=\"/terminal/index.html?" + id +
           "\">" + data[id].user + "</a></td><td>" +
           data[id].geometry[0] + "</td><td>" +
           data[id].geometry[1] + "</td>" +
           "</li>");
+        }
+        if (!anybodyStreaming) {
+          $('#is-streaming').hide();
+          $('#not-streaming').show();
         }
       });
     });
