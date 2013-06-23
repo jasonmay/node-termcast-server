@@ -232,10 +232,17 @@ static int moverect_internal(VTermRect dest, VTermRect src, void *user)
     inc_row  = +1;
   }
 
-  for(int row = init_row; row != test_row; row += inc_row)
-    memmove(getcell(screen, row, dest.start_col),
-            getcell(screen, row + downward, src.start_col),
-            cols * sizeof(ScreenCell));
+  for(int row = init_row; row != test_row; row += inc_row) {
+    VTermScreenCell *dstcell = getcell(screen, row, dest.start_col),
+                    *srccell = getcell(screen, row + downward, src.start_col);
+
+    if (!srccell) {
+      fprintf(stderr, "[libvterm] Invalid src cell: r%d c%d\n", row, src.start_col);
+      continue;
+    }
+
+    memmove(dstcell, srccell, cols * sizeof(ScreenCell));
+  }
 
   return 1;
 }
@@ -262,9 +269,14 @@ static int erase_internal(VTermRect rect, int selective, void *user)
 {
   VTermScreen *screen = user;
 
-  for(int row = rect.start_row; row < rect.end_row; row++)
+  int cell_missing = 0;
+  for(int row = rect.start_row; row < rect.end_row; row++) {
     for(int col = rect.start_col; col < rect.end_col; col++) {
       ScreenCell *cell = getcell(screen, row, col);
+      if (!cell) {
+        fprintf(stderr, "[libvterm] erase_internal cell is NULL! Why? r%d c%d\n", row, col);
+        cell_missing = 1;
+      }
 
       if(selective && cell->pen.protected_cell)
         continue;
@@ -272,7 +284,8 @@ static int erase_internal(VTermRect rect, int selective, void *user)
       cell->chars[0] = 0;
       cell->pen = screen->pen;
     }
-
+    if (cell_missing) break;
+  }
   return 1;
 }
 
