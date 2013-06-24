@@ -3,24 +3,12 @@ var DEBUG = 0;
 function canonicalize_data(diff) {
     var newdiff = diff;
 
-    if (newdiff.bo === '0') { newdiff.bo = 0; }
-
     if (newdiff.v && newdiff.v.length > 0) {
       newdiff.v = String.fromCharCode(newdiff.v[0]);
     }
 
     return newdiff;
 }
-
-var color_map = [
-    '#000000', '#ca311c', '#60bc33', '#bebc3a',
-    '#1432c8', '#c150be', '#61bdbe', '#c7c7c7',
-];
-
-var bold_color_map = [
-    '#686868', '#df6f6b', '#70f467', '#fef966',
-    '#6d75ea', '#ed73fc', '#73fafd', '#ffffff'
-];
 
 var cell_height = 12;
 var spacing     = 1.25;
@@ -77,7 +65,7 @@ function update_canvas(data, context, screen, cols, lines) {
                 diff = canonicalize_data(change[2]);
 
             if (diff) {
-                context.fillStyle = bold_color_map[0];
+                context.fillStyle = '#686868';
 
                 // cursor
                 if (diff.c) {
@@ -186,21 +174,10 @@ function c_update_cell_fg(col, line, context, diff, screen) {
     //return; // XXX
     var color;
 
-    var map;
-
-    preserve_or_assign('bo', col, line, diff, screen);
-
-    if (diff.bo) {
-        map = bold_color_map;
-    }
-    else {
-        map = color_map;
-    }
-
     if (typeof(diff.fg) === 'undefined') {
         fg = get_screen_value(screen, col, line, 'fg');
         if (typeof(fg) === 'undefined') {
-            color = map[7];
+            color = '#ffffff'; // TODO have get "default fg" out of libvterm
         }
         else {
             color = "rgb("+(fg & 0x0000ff) + ", " + ((fg & 0x00ff00) >> 8) + ", " + ((fg & 0xff0000) >> 16) + ")";

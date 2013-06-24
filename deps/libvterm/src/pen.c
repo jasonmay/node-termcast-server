@@ -14,13 +14,13 @@ static const VTermColor ansi_colors[] = {
   { 224, 224, 224 }, // white == light grey
 
   // high intensity
-  { 128, 128, 128 }, // black
-  { 255,  64,  64 }, // red
-  {  64, 255,  64 }, // green
-  { 255, 255,  64 }, // yellow
-  {  64,  64, 255 }, // blue
-  { 255,  64, 255 }, // magenta
-  {  64, 255, 255 }, // cyan
+  { 127, 127, 127 }, // black
+  { 255,  95,  95 }, // red
+  {  95, 255,  95 }, // green
+  { 255, 255,  95 }, // yellow
+  {  95,  95, 255 }, // blue
+  { 255,  95, 255 }, // magenta
+  {  95, 255, 255 }, // cyan
   { 255, 255, 255 }, // white for real
 };
 
@@ -136,7 +136,7 @@ static void set_pen_col_ansi(VTermState *state, VTermAttr attr, long col)
 void vterm_state_newpen(VTermState *state)
 {
   // 90% grey so that pure white is brighter
-  state->default_fg.red = state->default_fg.green = state->default_fg.blue = 240;
+  state->default_fg.red = state->default_fg.green = state->default_fg.blue = 228;
   state->default_bg.red = state->default_bg.green = state->default_bg.blue = 0;
 
   for(int col = 0; col < 16; col++)
