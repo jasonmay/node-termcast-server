@@ -47,15 +47,6 @@ Then you should be good to go.
 ./bin/server
 ```
 
-TODO
-----
-
-Need to track the cursor. The canvas doesn't have anything for this yet.
-
-Need to track background colors.
-
-Need to track other cell attributes, like boldness.
-
 BUGS
 ----
 
