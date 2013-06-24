@@ -105,6 +105,10 @@ Handle<Value> VTChanges::New(const Arguments& args) {
   obj->vt = vterm_new(args[0]->Uint32Value(), args[1]->Uint32Value());
   VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
   vterm_screen_reset(vt_screen, 1);
+
+  VTermState *vt_state = vterm_obtain_state(obj->vt);
+  vterm_state_set_bold_highbright(vt_state, 1);
+
   obj->Wrap(args.This());
 
   return args.This();
