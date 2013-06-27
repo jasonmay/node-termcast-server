@@ -8,9 +8,9 @@ Broadcast your work!
 Features
 --------
 
-#### libvterm
+#### Fast terminal emulation
 
-This app is bundled with the libvterm library, which has plenty of awesome terminal emulation support and is wicked fast.
+This app is bundled with the [libvterm](https://code.launchpad.net/~leonerd/libvterm/) library, which has plenty of awesome terminal emulation support and is great with processing large amounts of data at a time.
 
 #### 256-color support
 
