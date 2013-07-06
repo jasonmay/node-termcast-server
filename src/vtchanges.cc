@@ -109,6 +109,8 @@ Handle<Value> VTChanges::New(const Arguments& args) {
   VTermState *vt_state = vterm_obtain_state(obj->vt);
   vterm_state_set_bold_highbright(vt_state, 1);
 
+  vterm_parser_set_utf8(obj->vt, 1);
+
   obj->Wrap(args.This());
 
   return args.This();
