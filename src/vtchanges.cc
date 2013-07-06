@@ -4,11 +4,17 @@
 
 #include <string>
 
-// #include <iostream>
+// #define FIGURING_OUT_STUPID_BUGS // "I am stupid, derp" -jasonmay
+#ifdef FIGURING_OUT_STUPID_BUGS
+#include <iostream>
+#endif
 
 #include "vtchanges.h"
 
 using namespace v8;
+#ifdef FIGURING_OUT_STUPID_BUGS
+using namespace std;
+#endif
 
 VTChanges::VTChanges() {};
 VTChanges::~VTChanges() {};
@@ -223,7 +229,8 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
   Handle<Object> cdata = Object::New();
   VTermScreen *vt_screen = vterm_obtain_screen(obj->vt);
 
-  /*
+
+#ifdef FIGURING_OUT_STUPID_BUGS
   char *foo = *str;
   for (size_t s = 0; s < args[0]->ToString()->Length(); ++s) {
     if (s % 10 == 0) std::cerr << std::endl;
@@ -235,7 +242,7 @@ Handle<Value> VTChanges::Process(const Arguments& args) {
       std::cerr << "\033[0;32m" << (int)(uint8_t)foo[s] << "\033[m" << ":";
   }
   std::cerr << std::endl;
-  */
+#endif
 
   vterm_screen_set_callbacks(vt_screen, &screen_cbs, &cdata);
   vterm_push_bytes(obj->vt, *str, args[0]->ToString()->Length());
