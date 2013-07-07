@@ -115,17 +115,29 @@ function preserve_or_assign(key, col, line, diff, screen) {
     }
 }
 
+function get_font_width(col, line, context, diff, screen) {
+    var width_value = diff.v;
+    if (!width_value) width_value = get_screen_value(screen, col, line, 'v');
+    if (!width_value) width_value = 'M';
+
+    return context.measureText(width_value).width;
+}
+
 function c_update_cell_value(col, line, context, diff, screen) {
+    var font_width = get_font_width(col, line, context, diff, screen);
 
-    var cell_width = context.measureText('M').width;
+    var offset_width = context.measureText('M').width;
+    var offset_height = Math.floor(cell_height * spacing);
 
-    var mod_height = Math.floor(cell_height * spacing);
+    var draw_height = offset_height;
+    var draw_width = font_width;
 
     context.fillStyle = '#000';
     context.fillRect(
-        col * cell_width,
-        line * mod_height,
-        cell_width, mod_height
+        col * offset_width,
+        line * offset_height,
+        draw_width, draw_height // FIXME we only fill offset width
+                                  // to avoid BG ghosting.
     );
 
     c_update_cell_bg(col, line, context, diff, screen);
@@ -139,7 +151,7 @@ function c_update_cell_value(col, line, context, diff, screen) {
       diff.v = " ";
 
 
-    context.fillText(diff.v, col * cell_width, line * mod_height);
+    context.fillText(diff.v, col * offset_width, line * offset_height);
 }
 
 function c_update_cell_bg(col, line, context, diff, screen) {
@@ -159,6 +171,7 @@ function c_update_cell_bg(col, line, context, diff, screen) {
 
 
     var cell_width = context.measureText('M').width;
+    var font_width = get_font_width(col, line, context, diff, screen);
 
     var mod_height = Math.floor(cell_height * spacing);
 
@@ -166,7 +179,7 @@ function c_update_cell_bg(col, line, context, diff, screen) {
     context.fillRect(
         col * cell_width,
         line * mod_height,
-        cell_width, mod_height
+        font_width, mod_height
     );
 }
 
