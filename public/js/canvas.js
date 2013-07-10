@@ -120,7 +120,13 @@ function get_font_width(col, line, context, diff, screen) {
     if (!width_value) width_value = get_screen_value(screen, col, line, 'v');
     if (!width_value) width_value = 'M';
 
-    return context.measureText(width_value).width;
+    var min_width  = context.measureText('M').width;
+    var real_width =  context.measureText(width_value).width;
+
+    var ret = real_width;
+    if (ret < min_width) ret = min_width;
+
+    return ret;
 }
 
 function c_update_cell_value(col, line, context, diff, screen) {
